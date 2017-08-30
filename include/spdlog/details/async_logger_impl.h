@@ -76,9 +76,9 @@ inline void spdlog::async_logger::_set_formatter(spdlog::formatter_ptr msg_forma
     _async_log_helper->set_formatter(_formatter);
 }
 
-inline void spdlog::async_logger::_set_pattern(const std::string& pattern)
+inline void spdlog::async_logger::_set_pattern(const std::string& pattern, pattern_time_type pattern_time)
 {
-    _formatter = std::make_shared<pattern_formatter>(pattern);
+    _formatter = std::make_shared<pattern_formatter>(pattern, pattern_time);
     _async_log_helper->set_formatter(_formatter);
 }
 
@@ -88,7 +88,7 @@ inline void spdlog::async_logger::_sink_it(details::log_msg& msg)
     try
     {
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-		msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
+        msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
 #endif
         _async_log_helper->log(msg);
         if (_should_flush_on(msg))

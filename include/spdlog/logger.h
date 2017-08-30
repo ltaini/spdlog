@@ -43,6 +43,16 @@ public:
     template <typename Arg1, typename... Args> void warn(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
+
+    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const char* fmt, const Args&... args);
+    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const char* msg);
+    template <typename Arg1, typename... Args> void trace_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void debug_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void info_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void warn_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void error_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void critical_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
+
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
     template <typename... Args> void log(level::level_enum lvl, const wchar_t* fmt, const Args&... args);
@@ -52,6 +62,15 @@ public:
     template <typename... Args> void warn(const wchar_t* fmt, const Args&... args);
     template <typename... Args> void error(const wchar_t* fmt, const Args&... args);
     template <typename... Args> void critical(const wchar_t* fmt, const Args&... args);
+
+    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const wchar_t* msg);
+    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void trace_if(const bool flag, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void debug_if(const bool flag, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void info_if(const bool flag, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void warn_if(const bool flag, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void error_if(const bool flag, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void critical_if(const bool flag, const wchar_t* fmt, const Args&... args);
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     template <typename T> void log(level::level_enum lvl, const T&);
@@ -62,11 +81,19 @@ public:
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
 
+    template <typename T> void log_if(const bool flag, level::level_enum lvl, const T&);
+    template <typename T> void trace_if(const bool flag, const T&);
+    template <typename T> void debug_if(const bool flag, const T&);
+    template <typename T> void info_if(const bool flag, const T&);
+    template <typename T> void warn_if(const bool flag, const T&);
+    template <typename T> void error_if(const bool flag, const T&);
+    template <typename T> void critical_if(const bool flag, const T&);
+
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
     level::level_enum level() const;
     const std::string& name() const;
-    void set_pattern(const std::string&);
+    void set_pattern(const std::string&, pattern_time_type = pattern_time_type::local);
     void set_formatter(formatter_ptr);
 
     // automatically call flush() if message level >= log_level
@@ -82,7 +109,7 @@ public:
 
 protected:
     virtual void _sink_it(details::log_msg&);
-    virtual void _set_pattern(const std::string&);
+    virtual void _set_pattern(const std::string&, pattern_time_type);
     virtual void _set_formatter(formatter_ptr);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute
